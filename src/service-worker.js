@@ -78,13 +78,13 @@ self.addEventListener("message", (event) => {
 });
 
 // Any other custom service worker logic can go here.
-var CACHE_STATIC_NAME = "static-v3";
-var CACHE_DYNAMIC_NAME = "dynamic-v2";
+var CACHE_STATIC_NAME = "static-v1";
+var CACHE_DYNAMIC_NAME = "dynamic-v1";
 
 self.addEventListener("install", (event) => {
   console.log("[Service Worker] Installing Service Worker ...", event);
   event.waitUntil(
-    caches.open("static-v5").then((cache) => {
+    caches.open(CACHE_STATIC_NAME).then((cache) => {
       console.log("[Service Worker] Precaching App Shell");
       cache.addAll(["/", "/src/app.js"]);
     })
@@ -93,18 +93,18 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   console.log("[Service Worker] Activating Service Worker ....", event);
-  // caches.waitUntil(
-  //   caches.keys().then((keyList) => {
-  //     return Promise.all(
-  //       keyList.map((key) => {
-  //         if (key !== "static-v4" && key !== "dynamic-v3") {
-  //           console.log("[Service Worker] Removing old cache.", key);
-  //           return caches.delete(key);
-  //         }
-  //       })
-  //     );
-  //   })
-  // );
+  caches.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(
+        keyList.map((key) => {
+          if (key !== CACHE_STATIC_NAME && key !== CACHE_DYNAMIC_NAME) {
+            console.log("[Service Worker] Removing old cache.", key);
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
   return self.clients.claim();
 });
 
@@ -115,7 +115,7 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           // update the cache with a clone of the network response
           const responseClone = response.clone();
-          caches.open("dynamic-v5").then((cache) => {
+          caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
             cache.put(event.request.url, responseClone);
           });
           return response;
