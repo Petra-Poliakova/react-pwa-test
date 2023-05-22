@@ -68,63 +68,56 @@ self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
-  // if (event.data && event.data.type === "CLEAR_CACHE") {
-  //   caches.keys().then((cacheNames) => {
-  //     cacheNames.forEach((cacheName) => {
-  //       caches.delete(cacheName);
-  //     });
-  //   });
-  // }
 });
 
 // Any other custom service worker logic can go here.
-var CACHE_STATIC_NAME = "static-v1";
-var CACHE_DYNAMIC_NAME = "dynamic-v1";
+// var CACHE_STATIC_NAME = "static-v1";
+// var CACHE_DYNAMIC_NAME = "dynamic-v1";
 
-self.addEventListener("install", (event) => {
-  console.log("[Service Worker] Installing Service Worker ...", event);
-  event.waitUntil(
-    caches.open(CACHE_STATIC_NAME).then((cache) => {
-      console.log("[Service Worker] Precaching App Shell");
-      cache.addAll(["/", "/src/app.js"]);
-    })
-  );
-});
+// self.addEventListener("install", (event) => {
+//   console.log("[Service Worker] Installing Service Worker ...", event);
+//   event.waitUntil(
+//     caches.open(CACHE_STATIC_NAME).then((cache) => {
+//       console.log("[Service Worker] Precaching App Shell");
+//       cache.addAll(["/", "/src/app.js"]);
+//     })
+//   );
+// });
 
-self.addEventListener("activate", (event) => {
-  console.log("[Service Worker] Activating Service Worker ....", event);
-  caches.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(
-        keyList.map((key) => {
-          if (key !== CACHE_STATIC_NAME && key !== CACHE_DYNAMIC_NAME) {
-            console.log("[Service Worker] Removing old cache.", key);
-            return caches.delete(key);
-          }
-        })
-      );
-    })
-  );
-  return self.clients.claim();
-});
+// self.addEventListener("activate", (event) => {
+//   console.log("[Service Worker] Activating Service Worker ....", event);
+//   caches.waitUntil(
+//     caches.keys().then((keyList) => {
+//       return Promise.all(
+//         keyList.map((key) => {
+//           if (key !== CACHE_STATIC_NAME && key !== CACHE_DYNAMIC_NAME) {
+//             console.log("[Service Worker] Removing old cache.", key);
+//             return caches.delete(key);
+//           }
+//         })
+//       );
+//     })
+//   );
+//   return self.clients.claim();
+// });
 
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const networkFetch = fetch(event.request)
-        .then((response) => {
-          // update the cache with a clone of the network response
-          const responseClone = response.clone();
-          caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
-            cache.put(event.request.url, responseClone);
-          });
-          return response;
-        })
-        .catch((error) => {
-          console.error("ServiceWorker fetch failed: ", error);
-        });
-      // prioritize cached response over network
-      return cachedResponse || networkFetch;
-    })
-  );
-});
+// self.addEventListener("fetch", (event) => {
+//   event.respondWith(
+//     caches.match(event.request).then((cachedResponse) => {
+//       const networkFetch = fetch(event.request)
+//         .then((response) => {
+//           // update the cache with a clone of the network response
+//           const responseClone = response.clone();
+//           caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+//             cache.put(event.request.url, responseClone);
+//           });
+//           return response;
+//         })
+//         .catch((error) => {
+//           console.error("ServiceWorker fetch failed: ", error);
+//         });
+//       // prioritize cached response over network
+//       return cachedResponse || networkFetch;
+//     })
+//   );
+// });
