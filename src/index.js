@@ -2,13 +2,26 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+
+import { BrowserRouter as Router} from "react-router-dom";
+
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+
+// const router = createBrowserRouter([
+//   { path: "/", element: <Home/>, },
+//   { path: "/Comments", element: <Comments/>, },
+// ]);
+
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+     <Router >
+        <App />
+      </Router>
+    
   </React.StrictMode>
 );
 

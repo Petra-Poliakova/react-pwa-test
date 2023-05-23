@@ -1,5 +1,9 @@
 import React, {useState, useEffect} from 'react'
 
+import Avatar from '../images/avatar.png'
+import '../index.css';
+
+
 function Comments() {
     const [data, setData] = useState([]);
 
@@ -13,15 +17,16 @@ function Comments() {
       fetchData();
     }, [])
     return (
-      <div className="App">
-        
-          <h1>Comments</h1>
-        
+      <div>
+          <h1>Comments from our users.</h1>
         {data.map(comment => (
-          <div key={comment.id}>
-            <h2>{comment.name}</h2>
+          <div className='comment-container' key={comment.id}>
+            <div className='avatar-box'><img src={Avatar} alt="user-avatar" /></div>
+            <div className='comment-box'>
+            <h2 className='comment-name'>{comment.name}</h2>
             <p>{comment.email}</p>
            <p>{comment.body}</p>
+           </div>
           </div>
         ))}
       </div>
