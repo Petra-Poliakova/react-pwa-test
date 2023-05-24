@@ -1,17 +1,17 @@
 :root {
-  --primary-color: #27374D;
-  --secondary-color: #526D82;
-  --light300-color: #9DB2BF;
-  --light200-color: #DDE6ED;
-  --white-color: #FFFFFF;
+  --primary-color: #27374d;
+  --secondary-color: #526d82;
+  --light300-color: #9db2bf;
+  --light200-color: #dde6ed;
+  --white-color: #ffffff;
 }
 
 body {
   margin: 0;
   width: 100%;
   height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -19,9 +19,13 @@ body {
   /*overflow-x: hidden;*/
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--primary-color);
-  
 }
 
 h1 {
@@ -50,7 +54,7 @@ h6 {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 ul li {
@@ -61,48 +65,53 @@ ul li {
 nav a {
   color: var(--white-color);
   padding: 50px 25px;
- }
+}
 
- .comment-container{
-  max-width: 100%;
+/* .comments {
   display: flex;
   flex-direction: row;
-   margin: 25px;
-   padding: 25px;
-   border-radius: 20px;
-   background-color: var(--secondary-color);
- }
- .comment-box{
+} */
+
+.comment-container {
+  max-width: 80%;
+  margin: 25px auto;
+  display: flex;
+  flex-direction: row;
+  padding: 25px;
+  border-radius: 20px;
+  background-color: var(--secondary-color);
+}
+.comment-box {
   width: 90%;
   margin: 15px;
-   padding: 5px 15px;
-   border-radius: 20px;
-   background-color: var(--light200-color);
- }
- .avatar-box{
+  padding: 5px 15px;
+  border-radius: 20px;
+  background-color: var(--light200-color);
+}
+.avatar-box {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 10%;
   margin: 15px;
-   padding: 5px 15px;
-   border-radius: 20px;
-   background-color: var(--light200-color);
- }
+  padding: 5px 15px;
+  border-radius: 20px;
+  background-color: var(--light200-color);
+}
 
- .avatar-box img {
+.avatar-box img {
   width: 100px;
   height: 120px;
- }
+}
 
- @media (max-width: 1000px) {
-  .comment-container{
+@media (max-width: 1000px) {
+  .comment-container {
     flex-direction: column;
-   }
-   .comment-box{
+  }
+  .comment-box {
     width: 80%;
-   }
-   .avatar-box{
+  }
+  .avatar-box {
     width: 80%;
-   }
- }
+  }
+}
