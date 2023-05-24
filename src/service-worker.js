@@ -12,6 +12,8 @@ import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import { StaleWhileRevalidate } from "workbox-strategies";
+import {CacheableResponsePlugin} from 'workbox-cacheable-response';
+import {CacheFirst} from 'workbox-strategies';
 
 clientsClaim();
 
@@ -53,7 +55,7 @@ registerRoute(
   ({ url }) =>
     url.origin === self.location.origin && url.pathname.endsWith(".png"), // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new StaleWhileRevalidate({
-    cacheName: "images",
+    cacheName: "images-logo",
     plugins: [
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
@@ -61,6 +63,40 @@ registerRoute(
     ],
   })
 );
+
+registerRoute(
+  ({request}) => request.destination === 'image',
+  new CacheFirst({
+    cacheName: 'images-cache',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        // Only cache requests for a week
+        maxAgeSeconds: 7 * 24 * 60 * 60,
+        // Only cache 10 requests.
+        maxEntries: 10,
+      }),
+    ],
+  })
+);
+
+// Add your custom route here
+registerRoute(
+  ({ url }) => url.pathname === "/comments",
+  new StaleWhileRevalidate({
+    cacheName: "comments-cache",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({ maxEntries: 100 }), // Will cache a maximum of 100 requests.
+    ],
+  })
+);
+
+
 
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})

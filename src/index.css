@@ -65,6 +65,10 @@ ul li {
 nav a {
   color: var(--white-color);
   padding: 50px 25px;
+  text-decoration: none;
+}
+a.active{
+  text-decoration: underline;
 }
 
 /* .comments {

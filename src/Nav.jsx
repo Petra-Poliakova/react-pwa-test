@@ -1,5 +1,5 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
+import {NavLink} from 'react-router-dom'
 
 import './index.css';
 
@@ -7,8 +7,8 @@ const Nav = () => {
   return (
     <nav>
         <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/Comments">Comments</Link></li>
+          <li><NavLink to="/" className={({isActive})=> isActive ? 'active' : ''}>Home</NavLink></li>
+          <li><NavLink to="/Comments" className={({isActive})=> isActive ? 'active' : ''}>Comments</NavLink></li>
         </ul>
     </nav>
   )
