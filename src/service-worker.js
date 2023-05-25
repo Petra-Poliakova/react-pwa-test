@@ -84,14 +84,14 @@ registerRoute(
 
 // Add your custom route here
 registerRoute(
-  ({ url }) => url.pathname === "/comments",
+  ({ url }) => url.origin === 'https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app' || url.pathname === "/comments.json",
   new StaleWhileRevalidate({
-    cacheName: "comments-cache",
+    cacheName: "comments-cache-v1",
     plugins: [
       new CacheableResponsePlugin({
         statuses: [0, 200],
       }),
-      new ExpirationPlugin({ maxEntries: 100 }), // Will cache a maximum of 100 requests.
+      new ExpirationPlugin({ maxEntries: 1 }), // Will cache a maximum of 100 requests.
     ],
   })
 );

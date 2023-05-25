@@ -9,40 +9,37 @@ function Comments() {
   const [comments, setComments] = useState([]);
   const [data, setData] = useState([]);
 
-  // useEffect(() => {
-  //   onValue(ref(db), (snapshot) => {
-  //     const data = snapshot.val();
-  //     setComments([]);
-  //     console.log("dataue", data);
+  ///// Pre konfiguraciu Firebase
+  useEffect(() => {
+    onValue(ref(db), (snapshot) => {
+      const dataDB = snapshot.val();
+      //setData([]);
+      console.log("dataDB", dataDB);
 
-  //     if (data !== null) {
-  //       const arrData = Object.values(data).map((comment) => comment);
-  //       console.log("arrData", arrData);
-  //       setComments(arrData);
-  //       console.log("arrData", arrData);
-  //     }
+      if(dataDB !== null) {
+        const arrayData = Object.entries(dataDB.comments).map(([key, value])=> ({
+          idKey: key,
+          id: value.id,
+          name: value.name,
+          email: value.email,
+          body: value.body, 
+          imgAvatar: value.imgAvatar
+        }));
+        console.log('arrayData',arrayData);
+        setData(arrayData);
+        
+      }
+   });
+  }, []);
 
-  // if (data !== null) {
-  //   const arrData = Object.values(data).map((comment) => {
-  //     setComments((prevComments) => [...prevComments, comment]);
-  //   });
-  //   console.log("arrData", arrData);
-  // }
-
-  // let dataArray = [];
-  // for (let key in data) {
-  //   dataArray.push(data[key]);
-  //   console.log("dataArray", dataArray);
-  // }
-  // setComments(dataArray);
-  //});
-  //}, []);
+  console.log('arrayData-data',data)
 
   // const reformattedArray = Object.keys(comments).map((key) => ({
   //   id: comments[key].id,
   //   name: comments[key].name,
   // }));
 
+  ////Priamy fetch na url
   //console.log("reformattedArray", reformattedArray); // [{ 1: 10 }, { 2: 20 }, { 3: 30 }]
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -54,22 +51,22 @@ function Comments() {
   //   fetchData();
   // }, []);
 
-  const fetchUrl =
-    "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json";
+  // const fetchUrl =
+  //   "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await fetch(fetchUrl).then((response) => response.json());
-      console.log("result", result);
-      let dataArray = [];
-      for (var key in result) {
-        dataArray.push(result[key]);
-        console.log("dataArray", dataArray);
-      }
-      setData(dataArray);
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const result = await fetch(fetchUrl).then((response) => response.json());
+  //     //console.log("result", result);
+  //     let dataArray = [];
+  //     for (var key in result) {
+  //       dataArray.push(result[key]);
+  //       //console.log("dataArray", dataArray);
+  //     }
+  //     setComments(dataArray);
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <div className="container">
@@ -77,7 +74,7 @@ function Comments() {
       {data.map((comment) => (
         <div className="comment-container" key={comment.id}>
           <div className="avatar-box">
-            <img src={Avatar} alt="user-avatar" />
+            <img src={comment.imgAvatar} alt="user-avatar" />
           </div>
           <div className="comment-box">
             <h2 className="comment-name">{comment.name}</h2>
