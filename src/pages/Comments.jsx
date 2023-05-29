@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { db } from "../firebase";
 import {uid} from 'uid';
-import { set, ref, onValue } from "firebase/database";
+import { set, ref, onValue, remove, push } from "firebase/database";
+import { doc, setDoc } from "firebase/firestore"; 
 
 import Avatar from "../images/avatar.png";
 import "../index.css";
 
 function Comments() {
-  const [comments, setComments] = useState('');
   const [data, setData] = useState([]);
 
   const nameInputRef = useRef();
@@ -16,24 +16,31 @@ function Comments() {
 
   ///// Pre konfiguraciu Firebase
   useEffect(() => {
+    
     onValue(ref(db), (snapshot) => {
       const dataDB = snapshot.val();
-      //setData([]);
+      setData([]);
       console.log("dataDB", dataDB);
 
-      if(dataDB !== null) {
-        const arrayData = Object.entries(dataDB.comments).map(([key, value])=> ({
-          idKey: key,
-          id: value.id,
-          name: value.name,
-          email: value.email,
-          body: value.body, 
-          //imgAvatar: value.imgAvatar
-        }));
-        console.log('arrayData',arrayData);
-        setData(arrayData);
+      if(dataDB !== null){
+        Object.values(dataDB.comments).map(comment => {
+          setData(oldComment => [...oldComment, comment])
+        })
       }
-   });
+
+    //   if(dataDB !== null) {
+    //     const arrayData = Object.entries(dataDB.comments).map(([key, value])=> ({
+    //       idKey: key,
+    //       id: value.id,
+    //       name: value.name,
+    //       email: value.email,
+    //       msg: value.msg, 
+    //       //imgAvatar: value.imgAvatar
+    //     }));
+    //     console.log('arrayData',arrayData);
+    //     setData(arrayData);
+    //   }
+     });
   }, []);
 
   console.log('arrayData-data',data)
@@ -45,25 +52,24 @@ function Comments() {
     const email = emailInputRef.current.value;
     const msg = textInputRef.current.value;
 
-    set(ref(db, `/${id}`), {
-     id, name, email, msg 
+    set(ref(db, `comments/${id}`), {
+      id, name, email, msg 
     });
+
+    //const commentsRef = ref(db, "comments");
+
+    // const newCommentRef = push(commentsRef);
+    // set(newCommentRef, { id, name, email, msg });
 
     nameInputRef.current.value = '';
     emailInputRef.current.value = '';
     textInputRef.current.value = '';
-
-    // if (comments.trim() !== '') {
-    //   const newComment = {
-    //     id, name, email, msg
-    //   }
-    // }
+    
    }
 
-  // const reformattedArray = Object.keys(comments).map((key) => ({
-  //   id: comments[key].id,
-  //   name: comments[key].name,
-  // }));
+   const deleteComment = (comment) => {
+    remove(ref(db, `comments/${comment.id}`));
+   }
 
   ////Priamy fetch na url
   //console.log("reformattedArray", reformattedArray); // [{ 1: 10 }, { 2: 20 }, { 3: 30 }]
@@ -97,22 +103,28 @@ function Comments() {
   return (
     <div className="container">
       <h1>Comments from our users.</h1>
+      <div className="form-box">
       <h2>Add comments</h2>
       <form>
         <div>
-          <label for="name">Name: </label>
-          <input type="text" id="name" ref={nameInputRef} placeholder="Your fullname" />
+          <label htmlFor="name" className="form-label">Name: 
+            <input type="text" id="name" ref={nameInputRef} />
+          </label>
         </div>
         <div>
-          <label for="email">Email: </label>
-          <input type="text" id="email" ref={emailInputRef} placeholder="Your Email" />
+          <label htmlFor="email"  className="form-label">Email: 
+          <input type="text" id="email" ref={emailInputRef} />
+          </label>
         </div>
         <div>
-        <label for="body">Message: </label>
+        <label htmlFor="body"  className="form-label">Message: 
         <textarea id="body" rows="4" cols="50" ref={textInputRef} ></textarea>
+        </label>
         </div>
-        <button onClick={AddComments}>Add comments</button>
+        <button onClick={AddComments}>Add comment</button>
       </form>
+      </div>
+      
       <h2>Comments</h2>
       {data.map((comment) => (
         <div className="comment-container" key={comment.id}>
@@ -122,8 +134,9 @@ function Comments() {
           <div className="comment-box">
             <p className="comment-name"><b>{comment.name}</b></p>
             <p><b>{comment.email}</b></p>
-            <p>{comment.body}</p>
+            <p>{comment.msg}</p>
           </div>
+          <div><button onClick={() => deleteComment(comment)}>Delete</button></div>
         </div>
       ))}
     </div>

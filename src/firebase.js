@@ -5,7 +5,6 @@ import {getDatabase} from 'firebase/database'
 const firebaseConfig = {
   apiKey: "AIzaSyCqcrszk7pEWGrHWBMveYQVJxxYq8jsOlk",
   authDomain: "users-comments-1e926.firebaseapp.com",
-  //databaseURL:'https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json',
   databaseURL: "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "users-comments-1e926",
   storageBucket: "users-comments-1e926.appspot.com",
