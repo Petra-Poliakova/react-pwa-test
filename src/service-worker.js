@@ -11,9 +11,9 @@ import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { StaleWhileRevalidate } from "workbox-strategies";
-import {CacheableResponsePlugin} from 'workbox-cacheable-response';
-import {CacheFirst} from 'workbox-strategies';
+import { StaleWhileRevalidate, NetworkFirst } from "workbox-strategies";
+import { CacheableResponsePlugin } from "workbox-cacheable-response";
+import { CacheFirst } from "workbox-strategies";
 
 clientsClaim();
 
@@ -65,9 +65,9 @@ registerRoute(
 );
 
 registerRoute(
-  ({request}) => request.destination === 'image',
+  ({ request }) => request.destination === "image",
   new CacheFirst({
-    cacheName: 'images-cache',
+    cacheName: "images-cache",
     plugins: [
       new CacheableResponsePlugin({
         statuses: [0, 200],
@@ -84,8 +84,11 @@ registerRoute(
 
 // Add your custom route here
 registerRoute(
-  ({ url }) => url.origin === "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app" || url.pathname === "/comments.json",
-  new StaleWhileRevalidate({
+  ({ url }) =>
+    url.origin ===
+    "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json",
+  //new StaleWhileRevalidate({
+  new NetworkFirst({
     cacheName: "comments-cache-v3",
     plugins: [
       new CacheableResponsePlugin({
@@ -95,8 +98,6 @@ registerRoute(
     ],
   })
 );
-
-
 
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
