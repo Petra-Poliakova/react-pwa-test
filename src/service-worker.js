@@ -54,35 +54,43 @@ registerRoute(
   })
 );
 
+// Add your custom route here
+registerRoute( "https://jsonplaceholder.typicode.com/posts",
+  new StaleWhileRevalidate({
+    cacheName: "comments-cache-v3",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({ maxEntries: 10 }), // Will cache a maximum of 100 requests.
+    ],
+  })
+);
+registerRoute( "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json",
+  new StaleWhileRevalidate({
+    cacheName: "commentsFB-cache-v1",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({ maxEntries: 10 }), // Will cache a maximum of 100 requests.
+    ],
+  })
+);
+
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
 });
 
-// Add your custom route here
-// registerRoute(
-//   ({ url }) =>
-//     url.origin ===
-//     "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json",
-//   //new StaleWhileRevalidate({
-//   new NetworkFirst({
-//     cacheName: "comments-cache-v3",
-//     plugins: [
-//       new CacheableResponsePlugin({
-//         statuses: [0, 200],
-//       }),
-//       new ExpirationPlugin({ maxEntries: 10 }), // Will cache a maximum of 100 requests.
-//     ],
-//   })
-// );
 
 //https://github.com/leomeneguzzi/react-pwa-offline-storage/blob/master/src/App.tsx
 //https://github.com/okbrown/okb-react-pwa/tree/master
 
 // Any other custom service worker logic can go here.
-// var CACHE_STATIC_NAME = "static-v1";
-// var CACHE_DYNAMIC_NAME = "dynamic-v1";
+ //var CACHE_STATIC_NAME = "static-v1";
+ //var CACHE_DYNAMIC_NAME = "dynamic-v1";
 
 // self.addEventListener("install", (event) => {
 //   console.log("[Service Worker] Installing Service Worker ...", event);
