@@ -1,8 +1,8 @@
 import { openDB } from "idb";
 
 // Názov a verzia databázy
-const DB_NAME = "commentsDB";
-const DB_VERSION = 2;
+const DB_NAME = "comments-DB";
+const DB_VERSION = 3;
 
 // Názov a nastavenia objektového úložiska
 const OBJECT_STORE_NAME = "comments";
@@ -42,4 +42,3 @@ export const getCommentsFromDB = async () => {
   const store = tx.objectStore(OBJECT_STORE_NAME);
   return store.getAll();
 };
-

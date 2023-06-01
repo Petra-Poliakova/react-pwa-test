@@ -17,7 +17,28 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Enable offline persistence
-db.persistenceEnabled = true;
+// Voliteľne: inicializácia IndexedDB
+// if ("indexedDB" in window) {
+//   const request = window.indexedDB.open("yourDatabaseName", 1);
+
+//   request.onerror = function (event) {
+//     console.log("Chyba pri otváraní IndexedDB:", event.target.error);
+//   };
+
+//   request.onupgradeneeded = function (event) {
+//     const db = event.target.result;
+//     // Vytvorenie objektu úložiska v IndexedDB
+//     const store = db.createObjectStore("comments", { keyPath: "id" });
+//     // Definovanie indexu (voliteľné)
+//     //store.createIndex("indexName", "indexProperty", { unique: false });
+//   };
+
+//   request.onsuccess = function (event) {
+//     const db = event.target.result;
+//     console.log("IndexedDB je pripravené na použitie.");
+//   };
+// } else {
+//   console.log("IndexedDB nie je podporované v tomto prehliadači.");
+// }
 
 export default db;
