@@ -1,24 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import db from "../firestore";
-//import db from "../firebase";
+import React, { useState, useEffect, useRef } from "react";
+import db from "../firebase/firestore";
+//import db from "../firebase/firebase";
 //import { uid } from "uid";
 //import { set, ref, onValue, remove } from "firebase/database";
 
 import Avatar from "../images/avatar.png";
 import "../index.css";
-import {
-  collection,
-  onSnapshot,
-  addDoc,
-  doc,
-  deleteDoc,
-  getDoc,
-} from "firebase/firestore";
-import {
-  addCommentToDB,
-  deleteCommentFromDB,
-  getCommentsFromDB,
-} from "../helper/indexedDB";
+import { collection, onSnapshot, addDoc, doc, deleteDoc } from "firebase/firestore";
 
 function Comments() {
   const [data, setData] = useState([]);
@@ -26,27 +14,6 @@ function Comments() {
   const nameInputRef = useRef();
   const emailInputRef = useRef();
   const textInputRef = useRef();
-
-  // useCallback(() => {
-  //   // Načítanie komentárov z Firestore
-  //   const loadCommentsFromFirestore = async () => {
-  //     // Načítajte komentáre z Firestore
-  //     const firestoreComments = await loadCommentsFromFirestore(); // Upravte túto časť podľa vášho kódu
-
-  //     // Uložte komentáre do IndexedDB
-  //     for (const comment of firestoreComments) {
-  //       await addCommentToDB(comment);
-  //     }
-
-  //     // Načítajte komentáre z IndexedDB
-  //     const indexedDBComments = await getCommentsFromDB();
-  //     console.log("Komentáre z IndexedDB:", indexedDBComments);
-
-  //     // Použite načítané komentáre na potrebné účely
-  //     // Napríklad, aktualizujte zobrazenie komentárov vo vašej aplikácii
-  //   };
-  //   loadCommentsFromFirestore();
-  // }, []);
 
   useEffect(() => {
     // onValue(ref(db), (snapshot) => {
@@ -66,22 +33,13 @@ function Comments() {
         id: comment.id,
       }));
       //console.log('comments',comments )
-      console.log("From Firestore");
       if (comments !== null) {
         setData(comments);
       }
     });
   }, []);
 
-  if ("indexedDB" in window) {
-    getCommentsFromDB("comments").then((idbData) => {
-      if (data == null) {
-        console.log("From cache");
-        setData(idbData);
-      }
-    });
-  }
-  console.log("data", data);
+ 
   const AddComments = async (e) => {
     e.preventDefault();
     //const id = uid();
@@ -118,6 +76,7 @@ function Comments() {
   return (
     <div className="container">
       <h1>Comments from our users.</h1>
+      <p>Example for Firebase - Firestore database</p>
       <div className="form-box">
         <h2>Add comments</h2>
         <form>
