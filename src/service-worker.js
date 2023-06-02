@@ -55,17 +55,17 @@ registerRoute(
 );
 
 // Add your custom route here
-registerRoute( "https://jsonplaceholder.typicode.com/posts",
-  new StaleWhileRevalidate({
-    cacheName: "comments-cache-v3",
-    plugins: [
-      new CacheableResponsePlugin({
-        statuses: [0, 200],
-      }),
-      new ExpirationPlugin({ maxEntries: 10 }), // Will cache a maximum of 100 requests.
-    ],
-  })
-);
+// registerRoute( "https://jsonplaceholder.typicode.com/posts",
+//   new StaleWhileRevalidate({
+//     cacheName: "posts",
+//     plugins: [
+//       new CacheableResponsePlugin({
+//         statuses: [0, 200],
+//       }),
+//       new ExpirationPlugin({ maxEntries: 10 }), // Will cache a maximum of 100 requests.
+//     ],
+//   })
+// );
 registerRoute( "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json",
   new StaleWhileRevalidate({
     cacheName: "commentsFB-cache-v1",
@@ -84,7 +84,7 @@ self.addEventListener("message", (event) => {
   }
 });
 
-
+//https://www.youtube.com/@SteveGriffith-Prof3ssorSt3v3/playlists
 //https://github.com/leomeneguzzi/react-pwa-offline-storage/blob/master/src/App.tsx
 //https://github.com/okbrown/okb-react-pwa/tree/master
 

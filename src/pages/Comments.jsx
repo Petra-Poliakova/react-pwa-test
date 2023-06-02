@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
-//import db from "../firebase/firestore";
-import {db} from "../firebase/firebase";
-import { uid } from "uid";
-import { set, ref, onValue, remove } from "firebase/database";
+import db from "../firebase/firestore";
+//import {db} from "../firebase/firebase";
+//import { uid } from "uid";
+//import { set, ref, onValue, remove } from "firebase/database";
 
-import {getCommentsFromDB} from '../helper/indexedDB'
+//import {getCommentsFromDB, addCommentToDB} from '../helper/indexedDB'
+//import { openDB } from "idb";
 
 import Avatar from "../images/avatar.png";
 import "../index.css";
-//import { collection, onSnapshot, addDoc, doc, deleteDoc } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, doc, deleteDoc } from "firebase/firestore";
 
 function Comments() {
-  const [comments, setComments] = useState([]);
+  
   const [data, setData] = useState([]);
 
   const nameInputRef = useRef();
@@ -19,95 +20,111 @@ function Comments() {
   const textInputRef = useRef();
 
   useEffect(() => {
-    onValue(ref(db), (snapshot) => {
-      const dataDB = snapshot.val();
-      setData([]);
-      console.log("dataDB", dataDB);
-
-      if (dataDB !== null) {
-        Object.values(dataDB.comments).map((comment) => {
-          setData((oldComment) => [...oldComment, comment]);
-        });
-      }
-    });
-    // onSnapshot(collection(db, "comments"), (snapshot) => {
-    //   const comments = snapshot.docs.map((comment) => ({
-    //     ...comment.data(),
-    //     id: comment.id,
-    //   }));
-    //   //console.log('comments',comments )
-    //   if (comments !== null) {
-    //     setData(comments);
-    //   }
-    // });
+    fetchData();
   }, []);
 
+  const openDB = () => {
+    return new Promise((resolve, reject) => {
+      const request = window.indexedDB.open("commentsDB", 1);
+
+      request.onerror = (event) => {
+        reject("Error opening database");
+      };
+
+      request.onsuccess = (event) => {
+        resolve(event.target.result);
+      };
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        const objectStore = db.createObjectStore("comments", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+        objectStore.createIndex("name", "name", { unique: false });
+        objectStore.createIndex("email", "email", { unique: false });
+        objectStore.createIndex("msg", "msg", { unique: false });
+      };
+    });
+  };
+
+  //const fetchData = () => {
+    //Firebase
+    // onValue(ref(db), (snapshot) => {
+    //   const dataDB = snapshot.val();
+    //   setData([]);
+    //   console.log("dataDB", dataDB);
+
+    //   if (dataDB !== null) {
+    //     Object.values(dataDB.comments).map((comment) => {
+    //       setData((oldComment) => [...oldComment, comment]);
+          
+    //     });
+    //   }
+      
+    // });
+  //}
+
+  const fetchData = async() =>{
+    try {
  
+  // Firestore - načítanie komentárov
+  onSnapshot(collection(db, "comments"), (snapshot) => {
+   const comments = snapshot.docs.map((comment) => ({
+     ...comment.data(),
+     id: comment.id,
+   }));
+   //console.log('comments',comments )
+   if (comments !== null) {
+     setData(comments);
+     }
+ });
+    }catch (error) {
+      console.error("Error opening database:", error);
+    }
+    
+  }
+
   const AddComments = async (e) => {
     e.preventDefault();
-    const id = uid();
+    //const id = uid();
     const name = nameInputRef.current.value;
     const email = emailInputRef.current.value;
     const msg = textInputRef.current.value;
 
     //Realtime database add
-    set(ref(db, `comments/${id}`), { id, name, email, msg });
+    //set(ref(db, `comments/${id}`), { id, name, email, msg });
 
-    // try {
-    //   const docRef = await addDoc(collection(db, "comments"), {
-    //     name,
-    //     email,
-    //     msg,
-    //   });
+    try {
+      const docRef = await addDoc(collection(db, "comments"), {
+        name,
+        email,
+        msg,
+      });
 
       nameInputRef.current.value = "";
       emailInputRef.current.value = "";
       textInputRef.current.value = "";
-      //console.log("docRef", docRef.id);
-    //} catch (error) {
-      //console.error("Chyba pri pridávaní komentára:", error);
-    //}
+      console.log("docRef", docRef.id);
+    } catch (error) {
+      console.error("Chyba pri pridávaní komentára:", error);
+    }
   };
 
-  const deleteComment = (comment) => {
+  const deleteComment = async (id) => {
     //Realtime database delete
-     remove(ref(db, `comments/${comment.id}`));
-    //const docRef = doc(db, "comments", id);
-    //await deleteDoc(docRef);
+     //remove(ref(db, `comments/${comment.id}`));
+
+     //Firestore
+    const docRef = doc(db, "comments", id);
+    await deleteDoc(docRef);
   };
 
-  const fetchUrl =
-  "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json";
-
-useEffect(() => {
-  const fetchData = async () => {
-    const result = await fetch(fetchUrl).then((response) => response.json());
-    console.log("result", result);
-    let dataArray = [];
-    for (var key in result) {
-      dataArray.push(result[key]);
-      console.log("dataArray", dataArray);
-    }
-    setComments(dataArray);
-  };
-  fetchData();
-}, []);
-
-if ('indexedDB' in window) {
-  getCommentsFromDB('comments').then((idbData) => {
-    if (comments == null) {
-      console.log('from cache');
-      setComments(idbData)
-    }
-  })
-}
-
+  
 
   return (
     <div className="container">
-      {comments.map(x => {
-        return <p key={x.id}>{x.email}</p>
-      })}
+      
       <h1>Comments from our users.</h1>
       <p>Example for Firebase - Firestore database</p>
       <div className="form-box">
@@ -156,7 +173,7 @@ if ('indexedDB' in window) {
             <p>{comment.msg}</p>
           </div>
           <div>
-            <button onClick={() => deleteComment(comment)}>Delete</button>
+            <button onClick={() => deleteComment(comment.id)}>Delete</button>
           </div>
         </div>
       ))}
@@ -234,3 +251,25 @@ export default Comments;
 //});
 
 //}, []);
+
+/*Direct Fetch*/
+//const [comments, setComments] = useState([]);
+//{comments.map(x => {
+//  return <p key={x.id}>{x.email}</p>
+//})}
+// const fetchUrl =
+//   "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json";
+
+// useEffect(() => {
+//   const fetchData = async () => {
+//     const result = await fetch(fetchUrl).then((response) => response.json());
+//     console.log("result", result);
+//     let dataArray = [];
+//     for (var key in result) {
+//       dataArray.push(result[key]);
+//       console.log("dataArray", dataArray);
+//     }
+//     setComments(dataArray);
+//   };
+//   fetchData();
+// }, []);

@@ -2,7 +2,7 @@ import { openDB } from "idb";
 
 // Názov a verzia databázy
 const DB_NAME = "comments-DB";
-const DB_VERSION = 3;
+const DB_VERSION = 1;
 
 // Názov a nastavenia objektového úložiska
 const OBJECT_STORE_NAME = "comments";

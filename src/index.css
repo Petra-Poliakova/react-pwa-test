@@ -148,6 +148,18 @@ button:focus {
   width: 50px;
   height: 60px;
 }
+.post-container{
+  margin: 15px 25px;
+  width:50%;
+}
+.post-box{
+  margin-bottom:25px;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+   padding: 0 25px
+}
+
+
 
 @media (max-width: 1000px) {
   .form-box {
@@ -161,5 +173,8 @@ button:focus {
   }
   .avatar-box {
     width: 80%;
+  }
+  .post-container{
+    width:100%;
   }
 }

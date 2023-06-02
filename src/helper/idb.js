@@ -11,6 +11,24 @@ var dbPromise = new Promise ((resolve, reject) => {
     }
 });
 
+export const putData = (dbName, data) => {
+    dbPromise.then(async(db)=> {
+        const tx = db.transaction(dbName, 'posts');
+        const store = tx.objectStore(dbName);
+        store.put(data)
+    });
+}
+
+export const putAllData = (dbName, data) => {
+    dbPromise.then(async(db)=> {
+        const tx = db.transaction(dbName, 'posts');
+        const store = tx.objectStore(dbName);
+        data.foreach(item => {
+            store.put(item);
+        });
+     })
+}
+
   export const readAllData = (st) => {
     return new Promise((resolve, reject) => {
         dbPromise.then(async (db)=> {
@@ -23,3 +41,4 @@ var dbPromise = new Promise ((resolve, reject) => {
         })
     })
   }
+ 
