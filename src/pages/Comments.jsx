@@ -1,15 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import db from "../firebase/firestore";
 //import {db} from "../firebase/firebase";
-//import { uid } from "uid";
+import { uid } from "uid";
 //import { set, ref, onValue, remove } from "firebase/database";
 
-//import {getCommentsFromDB, addCommentToDB} from '../helper/indexedDB'
+import {getCommentsFromDB, saveCommentToDB, deleteCommentFromDB} from '../helper/indexedDB'
 //import { openDB } from "idb";
 
 import Avatar from "../images/avatar.png";
 import "../index.css";
 import { collection, onSnapshot, addDoc, doc, deleteDoc } from "firebase/firestore";
+
+// const dbPromise = openDB('my-database', 1, {
+//   upgrade(db) {
+//     db.createObjectStore('comments', { keyPath: 'id' });
+//     //const store = db.createObjectStore('comments', { keyPath: 'id' });
+//     //store.createIndex('by_id', 'id', { unique: true });
+//   },
+// });
 
 function Comments() {
   
@@ -19,36 +27,21 @@ function Comments() {
   const emailInputRef = useRef();
   const textInputRef = useRef();
 
+ 
   useEffect(() => {
-    fetchData();
+    async function fetchDataFromIndexedDB() {
+      const indexedDBData = await getCommentsFromDB();
+      setData(indexedDBData);
+    }
+  
+    fetchDataFromIndexedDB();
+    fetchFirestoreData();
+    //fetchData();
   }, []);
 
-  const openDB = () => {
-    return new Promise((resolve, reject) => {
-      const request = window.indexedDB.open("commentsDB", 1);
 
-      request.onerror = (event) => {
-        reject("Error opening database");
-      };
 
-      request.onsuccess = (event) => {
-        resolve(event.target.result);
-      };
-
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        const objectStore = db.createObjectStore("comments", {
-          keyPath: "id",
-          autoIncrement: true,
-        });
-        objectStore.createIndex("name", "name", { unique: false });
-        objectStore.createIndex("email", "email", { unique: false });
-        objectStore.createIndex("msg", "msg", { unique: false });
-      };
-    });
-  };
-
-  //const fetchData = () => {
+  //const fetchFirebaseData = () => {
     //Firebase
     // onValue(ref(db), (snapshot) => {
     //   const dataDB = snapshot.val();
@@ -65,29 +58,65 @@ function Comments() {
     // });
   //}
 
-  const fetchData = async() =>{
-    try {
- 
-  // Firestore - načítanie komentárov
-  onSnapshot(collection(db, "comments"), (snapshot) => {
-   const comments = snapshot.docs.map((comment) => ({
-     ...comment.data(),
-     id: comment.id,
-   }));
-   //console.log('comments',comments )
-   if (comments !== null) {
-     setData(comments);
-     }
- });
-    }catch (error) {
-      console.error("Error opening database:", error);
-    }
-    
-  }
+//   const fetchData = async() =>{
+  
+//   // Firestore - načítanie komentárov
+//   onSnapshot(collection(db, "comments"), (snapshot) => {
+//    const comments = snapshot.docs.map((comment) => ({
+//      ...comment.data(),
+//      id: comment.id,
+//    }));
+//    //console.log('comments',comments )
+//    if (comments !== null) {
+//      setData(comments);
+//      }
+//  });
+//   }
+
+// const fetchData = async () => {
+//   try {
+//     const db = await dbPromise;
+//     const transaction = db.transaction('comments', 'readonly');
+//     const store = transaction.objectStore('comments');
+//     //const index = store.index('by_id');
+//     //const comments = await index.getAll();
+//     const comments = await store.getAll();
+
+//     if (comments && comments.length > 0) {
+//       setData(comments);
+//     } else {
+//       fetchFirestoreData();
+//     }
+//   } catch (error) {
+//     console.error('Chyba pri načítaní dát z IndexedDB:', error);
+//     fetchFirestoreData();
+//   }
+// };
+
+const fetchFirestoreData = () => {
+  onSnapshot(collection(db, 'comments'), (snapshot) => {
+    const comments = snapshot.docs.map((comment) => ({
+      ...comment.data(),
+      id: comment.id,
+    }));
+    setData(comments);
+    saveCommentToDB(comments);
+    //saveDataToIndexedDB(comments);
+  });
+};
+
+// const saveDataToIndexedDB = async (data) => {
+//   const db = await dbPromise;
+//   const tx = db.transaction('comments', 'readwrite');
+//   const store = tx.objectStore('comments');
+//   await store.clear();
+//   data.forEach((comment) => store.add(comment));
+//   await tx.done;
+// };
 
   const AddComments = async (e) => {
     e.preventDefault();
-    //const id = uid();
+    const id = uid();
     const name = nameInputRef.current.value;
     const email = emailInputRef.current.value;
     const msg = textInputRef.current.value;
@@ -96,20 +125,57 @@ function Comments() {
     //set(ref(db, `comments/${id}`), { id, name, email, msg });
 
     try {
-      const docRef = await addDoc(collection(db, "comments"), {
-        name,
-        email,
-        msg,
-      });
+      await addDoc(collection(db, "comments"), { name, email, msg , id});
+       //const docRef = await addDoc(collection(db, "comments"), { name, email, msg, id });
 
+      const comments = { id, name, email, msg };
+
+      saveCommentToDB(comments);
+      
       nameInputRef.current.value = "";
       emailInputRef.current.value = "";
       textInputRef.current.value = "";
-      console.log("docRef", docRef.id);
+
+      //console.log("docRef", docRef.id);
     } catch (error) {
       console.error("Chyba pri pridávaní komentára:", error);
     }
+    
+    
   };
+  
+  // const AddComments = async (e) => {
+  //   e.preventDefault();
+  //   const name = nameInputRef.current.value;
+  //   const email = emailInputRef.current.value;
+  //   const msg = textInputRef.current.value;
+  
+  //   try {
+  //     const docRef = await addDoc(collection(db, 'comments'), { name, email, msg, });
+
+  //     //saveCommentToIndexedDB(docRef);
+  
+  //     nameInputRef.current.value = '';
+  //     emailInputRef.current.value = '';
+  //     textInputRef.current.value = '';
+  //     //console.log('docRef', docRef.id);
+  //   } catch (error) {
+  //     console.error('Chyba pri pridávaní komentára:', error);
+  //   }
+  // };
+  
+
+  // const saveCommentToIndexedDB = async (comment) => {
+  //   try {
+  //   const db = await dbPromise;
+  //   const tx = db.transaction('comments', 'readwrite');
+  //   const store = tx.objectStore('comments');
+  //   await store.add(comment);
+  //   await tx.done;
+  // } catch (error) {
+  //   console.error('Chyba pri ukladaní komentára do IndexedDB:', error);
+  // }
+  // };
 
   const deleteComment = async (id) => {
     //Realtime database delete
@@ -118,9 +184,27 @@ function Comments() {
      //Firestore
     const docRef = doc(db, "comments", id);
     await deleteDoc(docRef);
+
+    deleteCommentFromDB(id);
   };
 
+  // const deleteComment = async (id) => {
+  //   try {
+  //     //const db = await dbPromise;
+  //     // Firestore
+  //     const docRef = doc(db, 'comments', id);
+  //     await deleteDoc(docRef);
   
+  //     // IndexedDB
+  //     const dbS = await dbPromise;
+  //     const tx = dbS.transaction('comments', 'readwrite');
+  //     const store = tx.objectStore('comments');
+  //     await store.delete(id);
+  //     await tx.done;
+  //   } catch (error) {
+  //     console.error('Chyba pri mazaní komentára:', error);
+  //   }
+  // };
 
   return (
     <div className="container">

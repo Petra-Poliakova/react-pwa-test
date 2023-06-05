@@ -2,7 +2,7 @@ import { openDB } from "idb";
 
 // Názov a verzia databázy
 const DB_NAME = "comments-DB";
-const DB_VERSION = 1;
+const DB_VERSION = 3;
 
 // Názov a nastavenia objektového úložiska
 const OBJECT_STORE_NAME = "comments";
@@ -20,11 +20,26 @@ export const openDatabase = () => {
 };
 
 // Pridanie komentára do IndexedDB
-export const addCommentToDB = async (comment) => {
+// export const addCommentToDB = async (comment) => {
+//   const db = await openDatabase();
+//   const tx = db.transaction(OBJECT_STORE_NAME, "readwrite");
+//   const store = tx.objectStore(OBJECT_STORE_NAME);
+//   await store.put(comment);
+// };
+export const saveCommentToDB = async (comment) => {
   const db = await openDatabase();
   const tx = db.transaction(OBJECT_STORE_NAME, "readwrite");
   const store = tx.objectStore(OBJECT_STORE_NAME);
-  await store.put(comment);
+
+  if (Array.isArray(comment)) {
+    await Promise.all(comment.map(item => store.put(item)));
+  } else {
+    await store.put(comment);
+  }
+  //await Promise.all(comment.map(item => store.put(item)));
+  //await store.put(comment);
+  await tx.complete;
+
 };
 
 // Odstránenie komentára z IndexedDB
@@ -37,6 +52,7 @@ export const deleteCommentFromDB = async (commentId) => {
 
 // Získanie všetkých komentárov z IndexedDB
 export const getCommentsFromDB = async () => {
+  //const db = await openDatabase();
   const db = await openDatabase();
   const tx = db.transaction(OBJECT_STORE_NAME, "readonly");
   const store = tx.objectStore(OBJECT_STORE_NAME);
