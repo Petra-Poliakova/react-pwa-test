@@ -66,7 +66,8 @@ registerRoute(
 //     ],
 //   })
 // );
-registerRoute( "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json",
+registerRoute(
+  "https://users-comments-1e926-default-rtdb.europe-west1.firebasedatabase.app/comments.json",
   new StaleWhileRevalidate({
     cacheName: "commentsFB-cache-v1",
     plugins: [
@@ -77,6 +78,29 @@ registerRoute( "https://users-comments-1e926-default-rtdb.europe-west1.firebased
     ],
   })
 );
+
+//pushup notification service worker
+
+self.addEventListener("push", (event) => {
+  let body;
+  if (event.data) {
+    body = event.data.text();
+  } else {
+    body = "Push message no payload";
+  }
+  const options = {
+    body,
+    icon: "images/icon.png",
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1,
+    },
+  };
+  event.waitUntil(
+    self.registration.showNotification("Push Notification", options)
+  );
+});
 
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
@@ -89,8 +113,8 @@ self.addEventListener("message", (event) => {
 //https://github.com/okbrown/okb-react-pwa/tree/master
 
 // Any other custom service worker logic can go here.
- //var CACHE_STATIC_NAME = "static-v1";
- //var CACHE_DYNAMIC_NAME = "dynamic-v1";
+//var CACHE_STATIC_NAME = "static-v1";
+//var CACHE_DYNAMIC_NAME = "dynamic-v1";
 
 // self.addEventListener("install", (event) => {
 //   console.log("[Service Worker] Installing Service Worker ...", event);
