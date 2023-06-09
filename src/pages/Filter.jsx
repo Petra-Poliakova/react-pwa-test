@@ -70,3 +70,35 @@ const Filter = () => {
 };
 
 export default Filter;
+
+///Filter
+// interface User {
+//   id: number;
+//   name: string;
+//   age: number;
+//   gender: string;
+// }
+
+// const users: User[] = [
+//   { id: 1, name: 'John', age: 25, gender: 'male' },
+//   { id: 2, name: 'Jane', age: 30, gender: 'female' },
+//   { id: 3, name: 'Bob', age: 28, gender: 'male' },
+//   { id: 4, name: 'Alice', age: 35, gender: 'female' },
+// ];
+
+// const filterUsersByName = (users: User[], name: string): User[] => {
+//   return users.filter(user => user.name.toLowerCase().includes(name.toLowerCase()));
+// };
+
+// const filterUsersByAge = (users: User[], minAge: number, maxAge: number): User[] => {
+//   return users.filter(user => user.age >= minAge && user.age <= maxAge);
+// };
+
+// const filterUsersByGender = (users: User[], gender: string): User[] => {
+//   return users.filter(user => user.gender === gender);
+// };
+
+// const searchByName = 'Jane';
+// const filteredUsers = filterUsersByName(users, searchByName);
+
+// console.log(filteredUsers);

@@ -9,6 +9,11 @@ import TableFilter from "./pages/TableFilter";
 import Nav from "./Nav";
 
 function App() {
+
+  if(!('Notification' in window)) {
+    //do something
+    return;
+  }
   return (
     <>
       <header>
