@@ -7,6 +7,7 @@ import Comments from "./pages/Comments";
 import Filter from "./pages/Filter";
 import TableFilter from "./pages/TableFilter";
 import Nav from "./Nav";
+import CloneDeepTest from "./pages/CloneDeepTest";
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
         <Route path="/Comments" element={<Comments />}></Route>
         <Route path="/Filter" element={<Filter />}></Route>
         <Route path="/TableFilter" element={<TableFilter />}></Route>
+        <Route path="/CloneDeepTest" element={<CloneDeepTest />}></Route>
       </Routes>
     </>
   );

@@ -4,6 +4,11 @@ import "../index.css";
 
 const Filter = () => {
   const [data, setData] = useState([]);
+  const [filterTitle, setFilterTitle] = useState('');
+  const [filterBrand, setFilterBrand] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
+  const [filterPrice, setFilterPrice] = useState('');
+  const [filteredData, setFilteredData] = useState(data);
 
   const fetchData = async () => {
     const response = await fetch("https://dummyjson.com/products").then((res) =>
@@ -16,27 +21,60 @@ const Filter = () => {
     fetchData();
   }, []);
   console.log(data);
-  //   const handleSearch = (e) => {
-  //     setSearch(e.target.value);
-  //   };
 
-  //TypeError: value.toLowerCase is not a function
+  const handleFilter = () => {
+    const filteredData = data.filter(item => {
+      const nameMatch = item.title.toLowerCase().includes(filterTitle.toLowerCase());
+      const brandMatch = item.brand.toLowerCase().includes(filterBrand.toLowerCase());
+      const categoryMatch = item.category.toLowerCase().includes(filterCategory.toLowerCase());
+      const priceMatch = item.price.toString().includes(filterPrice);
+      
+      return nameMatch && categoryMatch && priceMatch && brandMatch;
+    });
 
-  //   const handleFilter = () => {
-  //     const result = data.filter((value) => {
-  //       if (typeof value === "string") {
-  //         return value.toLowerCase().includes(search.toLowerCase());
-  //       }
-  //       return false; // Skip non-string values
-  //     });
-  //     setFilter(result);
-  //   };
-  //   useEffect(() => {
-  //     handleFilter();
-  //   }, [search, data]);
+    setFilteredData(filteredData);
+  };
+
+  const handleClearFilter = () => {
+    setFilterTitle('');
+    setFilterBrand('');
+    setFilterCategory('');
+    setFilterPrice('');
+    setFilteredData(data);
+  };
 
   return (
     <div>
+      <div>
+      <input
+        type="text"
+        placeholder="Filter by name"
+        value={filterTitle}
+        onChange={e => setFilterTitle(e.target.value)}
+      />
+     
+     
+      <input
+        type="text"
+        placeholder="Filter by brand"
+        value={filterBrand}
+        onChange={e => setFilterBrand(e.target.value)}
+      />
+       <input
+        type="text"
+        placeholder="Filter by category"
+        value={filterCategory}
+        onChange={e => setFilterCategory(e.target.value)}
+      />
+       <input
+        type="text"
+        placeholder="Filter by price"
+        value={filterPrice}
+        onChange={e => setFilterPrice(e.target.value)}
+      />
+      <button onClick={handleFilter}>Filter</button>
+      <button onClick={handleClearFilter}>Clear Filter</button>
+      </div>
       <table
         style={{
           width: "95%",
@@ -54,7 +92,7 @@ const Filter = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item, index) => (
+          {filteredData.map((item, index) => (
             <tr key={index}>
               <td className="tableCellStyle">{item.id}</td>
               <td className="tableCellStyle">{item.title}</td>

@@ -31,6 +31,14 @@ const Nav = () => {
             Filter
           </NavLink>
         </li>
+        <li>
+          <NavLink
+            to="/CloneDeepTest"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            CloneDeepTest
+          </NavLink>
+        </li>
         {/* <li>
           <NavLink
             to="/TableFilter"
