@@ -4,11 +4,11 @@ import "../index.css";
 
 const Filter = () => {
   const [data, setData] = useState([]);
-  const [filterTitle, setFilterTitle] = useState('');
-  const [filterBrand, setFilterBrand] = useState('');
-  const [filterCategory, setFilterCategory] = useState('');
-  const [filterPrice, setFilterPrice] = useState('');
-  const [filteredData, setFilteredData] = useState(data);
+  const [filterTitle, setFilterTitle] = useState("");
+  const [filterBrand, setFilterBrand] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
+  const [filterPrice, setFilterPrice] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
   const fetchData = async () => {
     const response = await fetch("https://dummyjson.com/products").then((res) =>
@@ -20,60 +20,109 @@ const Filter = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  console.log(data);
+  //console.log(data);
 
-  const handleFilter = () => {
-    const filteredData = data.filter(item => {
-      const nameMatch = item.title.toLowerCase().includes(filterTitle.toLowerCase());
-      const brandMatch = item.brand.toLowerCase().includes(filterBrand.toLowerCase());
-      const categoryMatch = item.category.toLowerCase().includes(filterCategory.toLowerCase());
+  useEffect(() => {
+    // Aktualizácia filtrovaných dát pri zmene pôvodných dát
+    const filteredData = data.filter((item) => {
+      const nameMatch = item.title
+        .toLowerCase()
+        .includes(filterTitle.toLowerCase());
+      const brandMatch = item.brand
+        .toLowerCase()
+        .includes(filterBrand.toLowerCase());
+      const categoryMatch = item.category
+        .toLowerCase()
+        .includes(filterCategory.toLowerCase());
       const priceMatch = item.price.toString().includes(filterPrice);
-      
+
       return nameMatch && categoryMatch && priceMatch && brandMatch;
     });
 
     setFilteredData(filteredData);
+  }, [data, filterTitle, filterBrand, filterCategory, filterPrice]);
+
+  const handleClearFilterTitle = () => {
+    setFilterTitle("");
+  };
+  const handleClearFilterBrand = () => {
+    setFilterBrand("");
+  };
+  const handleClearFilterCategory = () => {
+    setFilterCategory("");
+  };
+  const handleClearFilterPrice = () => {
+    setFilterPrice("");
   };
 
-  const handleClearFilter = () => {
-    setFilterTitle('');
-    setFilterBrand('');
-    setFilterCategory('');
-    setFilterPrice('');
+  const handleClearAllFilter = () => {
+    setFilterTitle("");
+    setFilterBrand("");
+    setFilterCategory("");
+    setFilterPrice("");
     setFilteredData(data);
   };
 
   return (
     <div>
-      <div>
-      <input
-        type="text"
-        placeholder="Filter by name"
-        value={filterTitle}
-        onChange={e => setFilterTitle(e.target.value)}
-      />
-     
-     
-      <input
-        type="text"
-        placeholder="Filter by brand"
-        value={filterBrand}
-        onChange={e => setFilterBrand(e.target.value)}
-      />
-       <input
-        type="text"
-        placeholder="Filter by category"
-        value={filterCategory}
-        onChange={e => setFilterCategory(e.target.value)}
-      />
-       <input
-        type="text"
-        placeholder="Filter by price"
-        value={filterPrice}
-        onChange={e => setFilterPrice(e.target.value)}
-      />
-      <button onClick={handleFilter}>Filter</button>
-      <button onClick={handleClearFilter}>Clear Filter</button>
+      <h1>Filter product</h1>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "20%",
+          margin: "0 50px",
+        }}
+      >
+        <div
+          style={{ display: "flex", flexDirection: "row", margin: "10px 0" }}
+        >
+          <input
+            type="text"
+            placeholder="Filter by title"
+            value={filterTitle}
+            onChange={(e) => setFilterTitle(e.target.value)}
+          />
+          <button onClick={handleClearFilterTitle}>clear</button>
+        </div>
+        <div
+          style={{ display: "flex", flexDirection: "row", margin: "10px 0" }}
+        >
+          <input
+            type="text"
+            placeholder="Filter by brand"
+            value={filterBrand}
+            onChange={(e) => setFilterBrand(e.target.value)}
+          />
+          <button onClick={handleClearFilterBrand}>clear</button>
+        </div>
+        <div
+          style={{ display: "flex", flexDirection: "row", margin: "10px 0" }}
+        >
+          <input
+            type="text"
+            placeholder="Filter by category"
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+          />
+          <button onClick={handleClearFilterCategory}>clear</button>
+        </div>
+        <div
+          style={{ display: "flex", flexDirection: "row", margin: "10px 0" }}
+        >
+          <input
+            type="text"
+            placeholder="Filter by price"
+            value={filterPrice}
+            onChange={(e) => setFilterPrice(e.target.value)}
+          />
+          <button onClick={handleClearFilterPrice}>clear</button>
+        </div>
+
+        {/* <button onClick={handleFilter}>Filter</button> */}
+        <button style={{ margin: "10px 0" }} onClick={handleClearAllFilter}>
+          Clear All
+        </button>
       </div>
       <table
         style={{
