@@ -8,10 +8,10 @@ import Filter from "./pages/Filter";
 import TableFilter from "./pages/TableFilter";
 import Nav from "./Nav";
 import CloneDeepTest from "./pages/CloneDeepTest";
+import PushNotification from "./pages/PushNotification";
 
 function App() {
-
-  if(!('Notification' in window)) {
+  if (!("Notification" in window)) {
     //do something
     return;
   }
@@ -26,7 +26,7 @@ function App() {
         <Route path="/Comments" element={<Comments />}></Route>
         <Route path="/Filter" element={<Filter />}></Route>
         <Route path="/TableFilter" element={<TableFilter />}></Route>
-        <Route path="/CloneDeepTest" element={<CloneDeepTest />}></Route>
+        <Route path="/PushNotification" element={<PushNotification />}></Route>
       </Routes>
     </>
   );

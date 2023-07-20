@@ -33,10 +33,10 @@ const Nav = () => {
         </li>
         <li>
           <NavLink
-            to="/CloneDeepTest"
+            to="/PushNotification"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            CloneDeepTest
+            Notification
           </NavLink>
         </li>
         {/* <li>

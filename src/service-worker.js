@@ -81,32 +81,32 @@ registerRoute(
 
 //pushup notification service worker
 
-self.addEventListener("push", (event) => {
-  let body;
-  if (event.data) {
-    body = event.data.text();
-  } else {
-    body = "Push message no payload";
-  }
-  const options = {
-    body,
-    icon: "images/icon.png",
-    vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: 1,
-    },
-  };
-  event.waitUntil(
-    self.registration.showNotification("Push Notification", options)
-  );
-});
+// self.addEventListener("push", (event) => {
+//   let body;
+//   if (event.data) {
+//     body = event.data.text();
+//   } else {
+//     body = "Push message no payload";
+//   }
+//   const options = {
+//     body,
+//     icon: "images/icon.png",
+//     vibrate: [100, 50, 100],
+//     data: {
+//       dateOfArrival: Date.now(),
+//       primaryKey: 1,
+//     },
+//   };
+//   event.waitUntil(
+//     self.registration.showNotification("Push Notification", options)
+//   );
+// });
 
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
-});
+// self.addEventListener("message", (event) => {
+//   if (event.data && event.data.type === "SKIP_WAITING") {
+//     self.skipWaiting();
+//   }
+// });
 
 //https://www.youtube.com/@SteveGriffith-Prof3ssorSt3v3/playlists
 //https://github.com/leomeneguzzi/react-pwa-offline-storage/blob/master/src/App.tsx
