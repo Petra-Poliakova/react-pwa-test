@@ -1,55 +1,64 @@
-import React, { useState } from 'react';
-import useDeepCompareEffect from '../hooks/useDeepCompareEffect';
+import React from 'react'
 
 const CloneDeepTest = () => {
-    const initialData = [
-        {
-          id: 1,
-          name: 'Item 1',
-          items: ['Apple', 'Banana', 'Orange']
-        },
-        {
-          id: 2,
-          name: 'Item 2',
-          items: ['Grapes', 'Kiwi', 'Watermelon']
-        },
-        {
-          id: 3,
-          name: 'Item 3',
-          items: ['Pineapple', 'Mango', 'Strawberry']
-        }
-      ];
-    
-      const [data, setData] = useState(initialData);
-      const [filteredData, setFilteredData] = useState(data);
-      const [filter, setFilter] = useState('');
-    
-      useDeepCompareEffect(() => {
-        const filtered = data.filter(item => {
-          return item.items.some(subItem => subItem.includes(filter));
-        });
-    
-        setFilteredData(filtered);
-      }, [data, filter]);
-    
-      const handleFilterChange = event => {
-        setFilter(event.target.value);
-      };
-    
-      return (
-        <div>
-          <input type="text" value={filter} onChange={handleFilterChange} />
-          <ul>
-            {filteredData.map(item => (
-              <li key={item.id}>{item.name}</li>
-            ))}
-          </ul>
-        </div>
-      );
-    
-};
+  function porovnajObjekty(objekt1, objekt2) {
+    // Kontrola, či sú obidva objekty undefined
+    if (objekt1 === undefined && objekt2 === undefined) {
+      return true;
+    }
+  
+    // Kontrola, či je len jeden objekt undefined
+    if (objekt1 === undefined || objekt2 === undefined) {
+      return false;
+    }
+  
+    // Kontrola, či sú obidva objekty null
+    if (objekt1 === null && objekt2 === null) {
+      return true;
+    }
+  
+    // Kontrola, či je len jeden objekt null
+    if (objekt1 === null || objekt2 === null) {
+      return false;
+    }
+  
+    // Porovnanie vlastností objektov
+    var vlastnosti1 = Object.getOwnPropertyNames(objekt1);
+    var vlastnosti2 = Object.getOwnPropertyNames(objekt2);
+  
+    // Kontrola počtu vlastností
+    if (vlastnosti1.length !== vlastnosti2.length) {
+      return false;
+    }
+  
+    // Porovnanie hodnôt vlastností
+    for (var i = 0; i < vlastnosti1.length; i++) {
+      var vlastnost = vlastnosti1[i];
+      if (objekt1[vlastnost] !== objekt2[vlastnost]) {
+        return false;
+      }
+    }
+  
+    // Ak sa dostaneme sem, objekty sa rovnajú
+    return true;
+  }
+  
+  // Príklady použitia
+  var objektA = { x: 10, y: 20 };
+  var objektB = { x: 10, y: 20 };
+  var objektC = { x: 5, y: 10 };
+  
+  console.log(porovnajObjekty(objektA, objektB)); // true
+  console.log(porovnajObjekty(objektA, objektC)); // false
+  console.log(porovnajObjekty(objektA, undefined)); // false
+  console.log(porovnajObjekty(null, null)); // true
+  
+  return (
+    <div>CloneDeepTest</div>
+  )
+}
 
-export default CloneDeepTest;
+export default CloneDeepTest
 
 
 // import React from 'react'
@@ -126,3 +135,27 @@ export default CloneDeepTest;
 // }
 
 // export default CloneDeepTest
+
+ //useEffect(() => {
+
+    //    if (wait) return;
+
+    //    if (typeof previousFilter.current !== 'undefined' && isEqual(previousFilter.current, state.filter)) return;
+
+    //    var includeCount = false;
+        
+    //    if (typeof previousFilter.current === 'undefined' || !isEqual(previousFilter.current.data, state.filter.data)) {
+    //        includeCount = true; //zistujeme ci je previousFilter.current nedefinované alebo sa lisi od state.filter ak ano nastavujeme ho na true 
+    //    }
+    //    previousFilter.current = cloneDeep(state.filter); //zaistime ze previousFilter.current ma rovnaku hodnotu ako state.filter
+
+    //    console.log('cloneDeep(state.filter)', previousFilter.current);
+    //    console.log('state.filter', state.filter);
+
+    //    LoadData(includeCount);
+
+    //}, [state.filter, LoadData, wait]);
+
+    //Celkovo možno povedať, že tento kód slúži na monitorovanie zmien v state.filter a vykonáva akciu LoadData len v prípade,
+    //že sa zmení hodnota state.filter alebo wait.Taktiež sa používa premenná previousFilter.current na ukladanie predchádzajúcej hodnoty state.filter a porovnávanie zmien.
+    //Premenná includeCount slúži na určenie, či sa má do funkcie LoadData zahrnúť počet záznamov(true) alebo nie(false).
