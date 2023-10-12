@@ -25,28 +25,12 @@ const Nav = () => {
         </li>
         <li>
           <NavLink
-            to="/Filter"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Filter
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
             to="/PushNotification"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Notification
           </NavLink>
         </li>
-        {/* <li>
-          <NavLink
-            to="/TableFilter"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Table filter
-          </NavLink>
-        </li> */}
       </ul>
     </nav>
   );
